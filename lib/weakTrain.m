@@ -147,6 +147,19 @@ for classf = classifierID
                 modelCandidate.t= t;
             end
         end
+        
+    elseif classf==5
+        % better linear classifier
+        for q= 1:numSplits
+            w= sample_hyperplane(X);
+            dec = X*w - ones(N, 1) < 0;
+            Igain = evalDecision(Y, dec, u);
+            
+            if Igain>maxgain
+                maxgain = Igain;
+                modelCandidate.w= w;
+            end
+        end
 
     else
         fprintf('Error in weak train! Classifier with ID = %d does not exist.\n', classf);
@@ -181,6 +194,10 @@ end
 function H= classEntropy(y, u)
 
     cdist= histc(y, u);
+    if 0 == min(cdist)
+        H= -realmax;
+        return
+    end
     cdist= cdist .* log(cdist);
     cdist(isnan(cdist))= 0;
     H= sum(cdist);

@@ -29,6 +29,11 @@ elseif model.classifierID== 4
     
     % RBF, distance based learner
     yhat= double(pdist2(X, model.x) < model.t);
+    
+elseif model.classifierID== 5
+    
+    % fumin linear classifier
+    yhat = double(X*model.w - ones(N, 1) < 0);
 
 elseif model.classifierID== 0
     

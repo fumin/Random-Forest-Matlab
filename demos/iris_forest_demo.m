@@ -1,14 +1,15 @@
 data = load('../data/iris_sepal_length_sepal_width');
+%data = load('../data/adult.txt');
 X = data(:, 2:end);
 Y = data(:, 1);
-%scatter(X(:,1), X(:,2), 10, Y);
+number_of_classes = max(Y);
 
 opts = struct;
-opts.depth = 2;
-opts.numTrees = 500;
+opts.depth = 6;
+opts.numTrees = 100;
 opts.numSplits = 5;
 opts.verbose = true;
-opts.classifierID = 2;
+opts.classifierID = 5;
 
 tic;
 m = forestTrain(X, Y, opts);
@@ -22,12 +23,12 @@ fprintf('Training accuracy = %.2f\n', mean(yhatTrain == Y));
 % Look at classifier distribution for fun, to see what classifiers were
 % chosen at split nodes and how often
 fprintf('Classifier distributions:\n');
-classifierDist= zeros(1, 4);
+classifierDist= zeros(1, 5);
 unused= 0;
 for i=1:length(m.treeModels)
     for j=1:length(m.treeModels{i}.weakModels)
         cc= m.treeModels{i}.weakModels{j}.classifierID;
-        if cc>1 %otherwise no classifier was used at that node
+        if cc>0 %otherwise no classifier was used at that node
             classifierDist(cc)= classifierDist(cc) + 1;
         else
             unused= unused+1;
@@ -52,6 +53,9 @@ yinc = (yrange(2) - yrange(1)) / 75;
 image_size = size(x);
 xy = [x(:) y(:)];
 [yhat, ysoft] = forestTest(m, xy);
+if number_of_classes == 2
+    ysoft = [ysoft, zeros(size(yhat))];
+end
 decmaphard= reshape(yhat, image_size);
 decmap= reshape(ysoft, [image_size 3]);
 
