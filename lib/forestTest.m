@@ -10,11 +10,11 @@ function [Yhard, Ysoft] = forestTest(model, X, opts)
     u= model.treeModels{1}.classes; % Assume we have at least one tree!
     Ysoft= zeros(size(X,1), length(u));
     for i=1:numTrees
-        [~, ysoft] = treeTest(model.treeModels{i}, X, opts);
+        [unused, ysoft] = treeTest(model.treeModels{i}, X, opts);
         Ysoft= Ysoft + ysoft;
     end
     
     Ysoft = Ysoft/numTrees;
-    [~, ix]= max(Ysoft, [], 2);
+    [unused, ix]= max(Ysoft, [], 2);
     Yhard = u(ix);
 end
